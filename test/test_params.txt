@@ -1,0 +1,6 @@
+working_directory: /home/joatamazp/tmp/
+experiment_name: polycomb
+number_samples: 4
+fastq_directory: /home/joatamazp/rnaseqdata/
+genome_directory: /home/joatamazp/rnaseqdata/
+annotation_directory: /home/joatamazp/rnaseqdata/
