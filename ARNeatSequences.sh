@@ -1,5 +1,14 @@
 #! /bin/bash
 
+echo "-. .-.   .-. .-.   .-. .-.   ."
+echo "||\|||\ /|||\|||\ /|||\|||\ /|"
+echo "|/ \|||\|||/ \|||\|||/ \|||\||"
+echo "~   ·-~ ·-·   ·-~ ·-·   -~  ·~"
+
+echo ""
+echo -e "\e[4mARNeatSequences\e[0m is an amateur bash script that performs RNA-seq data analysis. For this purpose, it takes an TXT dataset including parameters detailed in the README document."
+echo ""
+
 ## The next message will appear if no imputs are given.
 
 if [ $# -eq 0 || $# -gt 1 ]
@@ -13,61 +22,81 @@ fi
 ## In any other case, the script will print the experiment name and number of
 ## samples specified in the parameters file.
 
+
+echo ""
+echo "============================"
+echo "|    Reading parameters    |"
+echo "============================"
+echo ""
+
 PARAMS=$1
 
 WD=$(grep working_directory: $PARAMS | awk '{ print $2 }')
-
-echo "Working directory: $WD"
+echo -e "\e[4mWorking directory\e[0m: $WD"
 
 EXP=$(grep experiment_name $PARAMS | awk '{ print $2 }')
-
-echo "Experiment name: $EXP"
+echo -e "\e[4mExperiment name\e[0m: $EXP"
 
 NSAM=$(grep number_samples: $PARAMS | awk '{ print $2 }')
+echo -e "\e[4mNumber of samples\e[0m: $NSAM"
 
-echo "Number of samples: $NSAM"
+GEND=$(grep genome_directory: $PARAMS | awk '{ print $2 }')
+echo -e "\e[4mGenome directory\e[0m: $GEND"
 
+ANND=$(grep annotation_directory: $PARAMS | awk '{ print $2 }')
+echo -e "\e[4mAnnotation directory\e[0m: $ANND"
+
+i=0
+j=1
+SAMPLES=()
+
+while [ $i -le $NSAM ]
+do
+        SAMPLES[$i]=$(grep path_sample_$j: $PARAMS | awk '{ print $2 }')
+        ((j++))
+        ((i++))
+done
+
+echo -e "\e[4mSamples directory\e[0m = ${SAMPLES[@]}"
 
 ## Once these parameters have been read, workspace is set:
+
+echo ""
+echo "============================"
+echo "|    Creating workspace    |"
+echo "============================"
+echo ""
 
 cd $WD
 mkdir $EXP
 cd $EXP
 mkdir genome annotation samples results
-cd samples
+
+cd genome
+cp $GEND genome.fa
+
+cd ../annotation
+cp $ANND annotation.gtf
+
+## Generating reference genome index
+extract_splice_sites.py annotation.gtf > annot_splice.ss
+extract_exons.py annotation.gtf > annot_exons.exon
+
+cd ../genome
+hisat2-build --ss ../annotation/annot_splice.ss --exon ../annotation/annot_exons.exon genome.fa index
+
+## Copying sample data to their corresponding sample file
+
+cd ../samples
 
 i=1
 while [ $i -le $NSAM ]
 do
 	mkdir sample_$i
+	cd sample_$i
+	cp ${SAMPLES[1]} sample_$i.fq.gz
+	cd ../
 	((i++))
 done
 
-## Everythings is looking good! Now, let's copy fastq, genome and annotation files
-## and move them to the directory previously set; i.e. fastq to samples, genome
-## to genome and annotation to annotation file.
-
-FASTQD=$(grep fastq_directory: $PARAMS | awk '{ print $2 }')
-
-echo "FASTQ directory: $FASTQD"
-
-GEND=$(grep genome_directory: $PARAMS | awk '{ print $2 }')
-
-echo "Genome directory: $GEND"
-
-ANND=$(grep annotation_directory: $PARAMS | awk '{ print $2}')
-
-echo "Annotation directory: $ANND"
-
-mv $GEND/*.fa $EXP/genome
-mv $ANND/*.gtf $EXP/annotation
-
-i=1
-while [ $i -le $NSAM ]
-then
-	echo $i
-	((i++))
-done
-
-
-
+## Let's move on to the sample analysis.
