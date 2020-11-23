@@ -6,7 +6,7 @@ echo "|/ \|||\|||/ \|||\|||/ \|||\||"
 echo "~   ·-~ ·-·   ·-~ ·-·   -~  ·~"
 
 echo ""
-echo -e "\e[4mARNeatSequences\e[0m is an amateur bash script that performs RNA-seq data analysis. For this purpose, it takes an TXT dataset including parameters detailed in the README document."
+echo -e "\e[4mARNeatSequences\e[0m is an amateur bash script that performs RNA-seq data analysis for single end fastaq datasets. For this purpose, it takes an TXT dataset including parameters detailed in the README document."
 echo ""
 
 ## The next message will appear if no imputs are given.
@@ -99,4 +99,21 @@ do
 	((i++))
 done
 
-## Let's move on to the sample analysis.
+## Let's move on to the sample analysis. This will take a while, as
+## datasets are heavy.
+
+echo ""
+echo "============================"
+echo "|     Sample analysis      |"
+echo "============================"
+echo ""
+
+cd ../results
+
+i=1
+while [ $i -le $NSAM ]
+do
+	qsub -o sample_$i -N sample_$i rna_sample_processing $WD/$EXP/samples/sample_$i $i $NSAM
+	((++i))
+
+done
