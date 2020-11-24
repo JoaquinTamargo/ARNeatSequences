@@ -1,3 +1,4 @@
+installation_directory: /home/joatamazp/github_repositories/
 working_directory: /home/joatamazp/tmp/
 experiment_name: polycomb
 number_samples: 4

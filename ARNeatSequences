@@ -46,6 +46,9 @@ echo -e "\e[4mGenome directory\e[0m: $GEND"
 ANND=$(grep annotation_directory: $PARAMS | awk '{ print $2 }')
 echo -e "\e[4mAnnotation directory\e[0m: $ANND"
 
+INSDIR=$(grep installation_directory: $PARAMS | awk '{ print $2 }')
+echo -e "\e[4mInstallation directory\e[0m: $INSDIR"
+
 i=0
 j=1
 SAMPLES=()
@@ -82,8 +85,16 @@ cp $ANND annotation.gtf
 extract_splice_sites.py annotation.gtf > annot_splice.ss
 extract_exons.py annotation.gtf > annot_exons.exon
 
+echo ""
+echo "Genome indexing may take a while. Please be patient."
+echo ""
+
 cd ../genome
 hisat2-build --ss ../annotation/annot_splice.ss --exon ../annotation/annot_exons.exon genome.fa index
+
+echo ""
+echo "Index done"
+echo ""
 
 ## Copying sample data to their corresponding sample file
 
@@ -107,13 +118,13 @@ echo "============================"
 echo "|     Sample analysis      |"
 echo "============================"
 echo ""
+echo "Individual samples are being processed."
 
 cd ../results
 
 i=1
 while [ $i -le $NSAM ]
 do
-	qsub -o sample_$i -N sample_$i rna_sample_processing $WD/$EXP/samples/sample_$i $i $NSAM
+	qsub -o sample_$i -N sample_$i ${INSDIR}/ARNeatSequences/rna_sample_processing $WD/$EXP/samples/sample_$i $i $NSAM
 	((++i))
-
 done
