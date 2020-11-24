@@ -1,4 +1,4 @@
-installation_directory: /home/joatamazp/github_repositories/
+installation_directory: /home/joatamazp/github_repositories/ARNeatSequences
 working_directory: /home/joatamazp/tmp/
 experiment_name: polycomb
 number_samples: 4
