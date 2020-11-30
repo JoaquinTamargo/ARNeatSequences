@@ -10,7 +10,10 @@ NSAM=$3
 cd ${SAMPLE_DIR}
 
 echo ""
-echo "Processing sample $i..."
+echo "==========================="
+echo "| Processing sample $i... |"
+echo "==========================="
+echo ""
 
 ## Sample quality control and read mapping to reference genome
 
@@ -42,14 +45,17 @@ echo ${SAMPLE_DIR}/sample_$i.gtf >> ../../results/merge_list.txt
 echo "sample_$i done!" >> ../../results/blackboard
 
 
+echo ""
+echo "Sample $i processing is done"
+echo ""
 ## Reading the blackboard (counting all lines)
 
-NUM_PROC=$(wc -l ../../results/blackboard)
+NUM_PROC=$(wc -l ../../results/blackboard | awk '{ print $1 }')
 
 
 if [ $NUM_PROC -eq $NSAM ]
 then
+	echo "All sample processing have been succesfully finished. Transcriptome merging is running."
+	echo ""
 	qsub -o merge -N merge $INSDIR/ARNeatSequences/transcriptome_merging ${SAMPLE_DIR}/../../results 
 fi
-
-echo "Sample $i processing is done"

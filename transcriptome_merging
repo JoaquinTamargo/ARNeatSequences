@@ -7,7 +7,7 @@
 
 RESDIR=$1
 
-echo "Transcriptome merging"
+echo "Transcriptome merging script is running. This is about to end. Just hang on!"
 
 
 ## Accessing results folder
@@ -19,3 +19,6 @@ stringtie --merge -G ../annotation/annotation.gtf -o stringtie_merged.gtf merge_
 ## Comparing our assembly with the reference
 gffcompare -r ../annotation/annotation.gtf -G -o comparison stringtie_merged.gtf
 
+
+echo ""
+echo "Transcriptome merging have finished."
