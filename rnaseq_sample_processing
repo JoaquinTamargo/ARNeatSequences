@@ -6,6 +6,7 @@
 SAMPLE_DIR=$1
 i=$2
 NSAM=$3
+INSDIR=$4
 
 cd ${SAMPLE_DIR}
 
