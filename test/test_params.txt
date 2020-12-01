@@ -8,3 +8,4 @@ path_sample_1: /home/joatamazp/rnaseqdata/col0_7dag_chr5_1.fastq.gz
 path_sample_2: /home/joatamazp/rnaseqdata/col0_7dag_chr5_2.fastq.gz
 path_sample_3: /home/joatamazp/rnaseqdata/abc_7dag_chr5_1.fastq.gz
 path_sample_4: /home/joatamazp/rnaseqdata/abc_7dag_chr5_2.fastq.gz
+experimental_design: /home/joatamazp/rnaseqdata/experimental_design.csv

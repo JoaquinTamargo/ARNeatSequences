@@ -49,6 +49,9 @@ echo -e "\e[4mAnnotation directory\e[0m: $ANND"
 INSDIR=$(grep installation_directory: $PARAMS | awk '{ print $2 }')
 echo -e "\e[4mInstallation directory\e[0m: $INSDIR"
 
+DESIGN=$(grep experimental_design: $PARAMS | awk '{ print $2 }')
+echo -e "\e[4mExperimental design directory\e[0m: $DESIGN"
+
 i=0
 j=1
 SAMPLES=()
@@ -125,6 +128,6 @@ cd ../results
 i=1
 while [ $i -le $NSAM ]
 do
-	qsub -o sample_$i -N sample_$i ${INSDIR}/ARNeatSequences/rnaseq_sample_processing $WD/$EXP/samples/sample_$i $i $NSAM $INSDIR
+	qsub -o sample_$i -N sample_$i ${INSDIR}/ARNeatSequences/rnaseq_sample_processing $WD/$EXP/samples/sample_$i $i $NSAM $INSDIR $DESIGN
 	((++i))
 done
