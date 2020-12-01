@@ -19,6 +19,16 @@ stringtie --merge -G ../annotation/annotation.gtf -o stringtie_merged.gtf merge_
 ## Comparing our assembly with the reference
 gffcompare -r ../annotation/annotation.gtf -G -o comparison stringtie_merged.gtf
 
+## Picking percentage of the previous comparison. Cheking differences with reference annotation.
+
+DIFF=$(grep "Novel loci:" comparison.stats | awk '{ print $5 }' | cut -d"%" -f 1 | cut -d"." -f 1)
+
+if [ $DIFF -ge 5 ]
+then
+	echo "========================================================="
+	echo "| WARNING: Reference transcriptome differs more than 5% |"
+	echo "========================================================="
+fi
 
 echo ""
 echo "Transcriptome merging have finished."

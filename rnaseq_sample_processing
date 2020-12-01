@@ -40,6 +40,10 @@ stringtie -G ../../annotation/annotation.gtf -o sample_$i.gtf -l sample_$i sampl
 
 echo ${SAMPLE_DIR}/sample_$i.gtf >> ../../results/merge_list.txt
 
+## Gene expression quantification
+
+stringtie -e -B -G ../../annotation/annotation.gtf -o sample_$i.gtf sample_$i.bam
+
 
 ## Message Passing Interface: writing on blackboard
 
