@@ -1,5 +1,7 @@
-#! bin/bash
-
+#$ -S /bin/bash
+#$ -V
+#$ -cwd
+#$ -j yes
 
 SAMPLE_DIR=$1
 i=$2
@@ -61,5 +63,5 @@ if [ $NUM_PROC -eq $NSAM ]
 then
 	echo "All sample processing have been succesfully finished. Transcriptome merging is running."
 	echo ""
-	bash $INSDIR/ARNeatSequences/transcriptome_merging ${SAMPLE_DIR}/../../results $INSDIR $DESIGN 
+	qsub -o merge -N merge $INSDIR/ARNeatSequences/transcriptome_merging ${SAMPLE_DIR}/../../results $INSDIR $DESIGN 
 fi

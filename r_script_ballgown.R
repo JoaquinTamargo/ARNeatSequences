@@ -7,16 +7,16 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 
-print("First argument:")
-print(as.numeric(args[[1]]))
-
-print("Second argument:")
-print(as.numeric(args[[2]]))
+results_directory <- args[[1]]
+experimental_design_directory <- args[[2]]
 
 ## Installation of packages neccesary for the analysis 
 
 library(ballgown)
-library(genefilter)
+
+## In order to read experimental data, contained in 
+
+samples_folder<-paste0(results_directory,"/../samples/")
 
 ## Reading the experimental design
 
@@ -36,11 +36,11 @@ head(gene.expression)
 dim(gene.expression)
 
 ## Nombramos las columnas con los nombres de nuestras muestras. 
-colnames(gene.expression) <- c("col0_1","col0_2","abc_1","abc_2")
+colnames(gene.expression) <- c("col0_1","col0_2","prc1_1","prc1_2")
 
 ## Previsualizamos la similitud entre las réplicas
 plot(log2(gene.expression[,1]+1),log2(gene.expression[,2]+1),pch=19,cex=0.7,xlab="col0_1",ylab=substitute(italic("col0_2")),cex.lab=1.25)
-plot(log2(gene.expression[,3]+1),log2(gene.expression[,4]+1),pch=19,cex=0.7,xlab="abc_1",ylab=substitute(italic("abc_2")),cex.lab=1.25)
+plot(log2(gene.expression[,3]+1),log2(gene.expression[,4]+1),pch=19,cex=0.7,xlab="prc1_1",ylab=substitute(italic("prc1_2")),cex.lab=1.25)
 
 ## Construimos un boxplot para comprobar que las distribuciones globales de las
 ## muestras son similares y comparables.
@@ -101,15 +101,15 @@ boxplot(log.gene.expression,col=rainbow(ncol(gene.expression)),ylab="log2(FPKM +
 
 ## Calculamos la matrix de expresión media. 
 col0 <- (log.gene.expression[,"col0_1"] + log.gene.expression[,"col0_2"])/2
-abc <- (log.gene.expression[,"abc_1"] + log.gene.expression[,"abc_2"])/2
+prc1 <- (log.gene.expression[,"prc1_1"] + log.gene.expression[,"prc1_2"])/2
 
-mean.expression <- matrix(c(col0,abc),ncol=2)
-colnames(mean.expression) <- c("col0","abc")
+mean.expression <- matrix(c(col0,prc1),ncol=2)
+colnames(mean.expression) <- c("col0","prc1_1")
 rownames(mean.expression) <- names(col0)
 head(mean.expression)
 
 ## Previsualizamos el efecto de la mutación en un scatterplot.
-plot(col0,abc,pch=19,cex=0.7,xlab="Col0",ylab=substitute(italic("abc")),cex.lab=1.25)
+plot(col0,prc1,pch=19,cex=0.7,xlab="Col0",ylab=substitute(italic("∆∆∆ prc1")),cex.lab=1.25)
 
 ##El paquete **limma** (Linear Models for Microarray Analysis) proporciona las 
 ##funciones necesarias para determinar los genes expresados de forma 
@@ -120,7 +120,7 @@ library(limma)
 ## Especificamos el diseño experimental
 
 experimental.design <- model.matrix(~ -1+factor(c(1,1,2,2)))
-colnames(experimental.design) <- c("col0","abc")
+colnames(experimental.design) <- c("col0","prc1")
 
 ##A continuación, ajustamos la estimación de los niveles de expresión de cada
 ##gen a un modelo lineal teniendo en cuenta el diseño experimental. Este paso
@@ -134,7 +134,7 @@ linear.fit <- lmFit(log.gene.expression, experimental.design)
 ##correspondientes separadas por un guión -. También recibe el argumento 
 ##levels, un vector con el nombre de las condiciones:
 
-contrast.matrix <- makeContrasts(abc-col0,levels=c("col0","abc"))
+contrast.matrix <- makeContrasts(prc1-col0,levels=c("col0","prc1"))
 
 ##Calculamos el fold-change y los p-valores correspondientes para cada gen en
 ##cada uno de los constrastes especificados utilizando las funciones *constrasts.fit* 
@@ -145,11 +145,11 @@ contrast.results <- eBayes(contrast.linear.fit)
 
 nrow(log.gene.expression)
 
-col0.abc <- topTable(contrast.results, number=7507,coef=1,sort.by="logFC")
-head(col0.abc)
+col0.prc1 <- topTable(contrast.results, number=7507,coef=1,sort.by="logFC")
+head(col0.prc1)
 
-fold.change <- col0.abc$logFC
-genes.ids <- rownames(col0.abc)
+fold.change <- col0.prc1$logFC
+genes.ids <- rownames(col0.prc1)
 
 activated.genes <- genes.ids[fold.change > 1]
 repressed.genes <- genes.ids[fold.change < - 1]

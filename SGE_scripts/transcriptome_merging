@@ -1,4 +1,7 @@
-#! bin/bash
+#$ -S /bin/bash
+#$ -V
+#$ -cwd
+#$ -j yes
 
 ## Reading parameters
 
@@ -31,3 +34,5 @@ fi
 
 echo ""
 echo "Transcriptome merging have finished."
+
+Rscript ${INSDIR}/r_script_ballgown.R $RESDIR $DESIGN
