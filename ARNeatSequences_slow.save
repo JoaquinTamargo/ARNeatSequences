@@ -79,7 +79,7 @@ cd $EXP
 mkdir genome annotation samples results
 
 cd genome
-cp $GEND genome.fa
+gunzip $GEND genome.fa
 
 cd ../annotation
 cp $ANND annotation.gtf
@@ -93,6 +93,7 @@ echo "Genome indexing may take a while. Please be patient."
 echo ""
 
 cd ../genome
+
 hisat2-build --ss ../annotation/annot_splice.ss --exon ../annotation/annot_exons.exon genome.fa index
 
 echo ""
